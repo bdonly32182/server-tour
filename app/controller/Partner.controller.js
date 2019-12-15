@@ -1,5 +1,7 @@
 let User = require('mongoose').model("User")
 let bcrypt = require('bcryptjs')
+let nodeMailer = require('nodemailer')
+
 exports.register=((req,res,next)=>{
     
     let password = req.body.password
@@ -75,4 +77,63 @@ exports.login =((req,res,next)=>{
             
         }
     })
+})
+
+exports.forgot =((req,res)=>{
+    var emails = req.body.email
+    console.log(emails);
+    
+    User.findOne({email:emails},'password',function(err,user){
+        
+        
+        if(err){
+            console.log('errr ',err);
+            
+            return next(err)
+            
+        }else{
+           console.log('user',user);
+           if(user){
+               console.log('mail correct ');
+               var transpoter = nodeMailer.createTransport({
+                    service: 'gmail',  
+                    auth: {
+                        user: 'tourject@gmail.com',
+                        pass: 'besttour'
+                    },
+                    tls: {
+                        rejectUnauthorized: false
+                    }
+                });
+                var mailOptions = {
+                    from: 'tourject@gmail.com',
+                    to: emails,
+                    subject: 'Sending Email using Node.js',
+                    html: `  <h3>Reset Your Password</h3>
+                    <p>We received a request to reset your password. If you did not make this request, simply ignore this email.</p>
+                    
+                    <p>Note:YOUR PASSWORD is <b> ${user.password} </b></p>
+                    <p>
+                        Thank you,<br />
+                        The System
+                    </p>`
+                };
+                transpoter.sendMail(mailOptions,(err,info)=>{
+                    if(err){
+                        res.json({email:err.message})
+                        return next(err)
+                        
+                    }else{
+                        console.log('email send ',info.response);
+                        res.json({email:true})
+                    }
+                })
+           }else{
+               res.json({email:false})
+           }
+            
+        }
+        
+    }
+    )
 })
