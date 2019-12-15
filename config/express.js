@@ -9,6 +9,6 @@ module.exports=()=>{
     }))
     app.use(bodyParser.json())
 
-    require('../app/router/Partner.router')(app)
+    require('../app/router/member.router')(app)
     return app
 }

@@ -94,17 +94,15 @@ exports.forgot =((req,res,next)=>{
         
         
         if(err){
-            console.log('errr ',err);
             
             return next(err)
             
         }else{
-           console.log('user',user);
            if(user){
                console.log('mail correct ');
                //update (param1,param2) param1 is collection us need update , param2 is data us need update
               
-                   console.log(user);
+            
                    bcrypt.genSalt(saltRound,function(err,salt){
                        if(err){
                            console.log('update pass and salt faild',err);
@@ -115,14 +113,13 @@ exports.forgot =((req,res,next)=>{
                                    console.log('hash faild update' ,err);
                                    
                                }else{
-                                   console.log('hashss',hash);
                                    
                                 User.findOneAndUpdate({email:emails},{password:hash},function(err,user){
-                                    console.log(user);
+                                    
                                     if(err){
                                         return next(err)
                                     }else{
-                                        res.json(user.password)
+                                        res.send('send password to Email success')
                                     }
                                 })
                                }
@@ -166,6 +163,7 @@ exports.forgot =((req,res,next)=>{
                 })
             
            }else{
+               //ไม่มีเมลนี้อยู่ในดาต้าเบส
                res.json({email:false})
            }
             
