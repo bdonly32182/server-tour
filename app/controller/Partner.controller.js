@@ -1,6 +1,7 @@
 let User = require('mongoose').model("User")
 let bcrypt = require('bcryptjs')
 let nodeMailer = require('nodemailer')
+let genarator = require('generate-password')
 
 exports.register=((req,res,next)=>{
     
@@ -79,10 +80,16 @@ exports.login =((req,res,next)=>{
     })
 })
 
-exports.forgot =((req,res)=>{
+exports.forgot =((req,res,next)=>{
     var emails = req.body.email
-    console.log(emails);
+    const saltRound = 10;
+    let passwords = genarator.generate({
+        length:8,
+        numbers:true
+    })
     
+    console.log('passwords',passwords);
+
     User.findOne({email:emails},'password',function(err,user){
         
         
@@ -95,6 +102,35 @@ exports.forgot =((req,res)=>{
            console.log('user',user);
            if(user){
                console.log('mail correct ');
+               //update (param1,param2) param1 is collection us need update , param2 is data us need update
+              
+                   console.log(user);
+                   bcrypt.genSalt(saltRound,function(err,salt){
+                       if(err){
+                           console.log('update pass and salt faild',err);
+                           
+                       }else{
+                           bcrypt.hash(passwords,salt,function(err,hash){
+                               if(err){
+                                   console.log('hash faild update' ,err);
+                                   
+                               }else{
+                                   console.log('hashss',hash);
+                                   
+                                User.findOneAndUpdate({email:emails},{password:hash},function(err,user){
+                                    console.log(user);
+                                    if(err){
+                                        return next(err)
+                                    }else{
+                                        res.json(user.password)
+                                    }
+                                })
+                               }
+                           })
+                       }
+                   })
+                   
+               
                var transpoter = nodeMailer.createTransport({
                     service: 'gmail',  
                     auth: {
@@ -112,7 +148,7 @@ exports.forgot =((req,res)=>{
                     html: `  <h3>Reset Your Password</h3>
                     <p>We received a request to reset your password. If you did not make this request, simply ignore this email.</p>
                     
-                    <p>Note:YOUR PASSWORD is <b> ${user.password} </b></p>
+                    <p>Note:YOUR PASSWORD is <b> ${passwords} </b></p>
                     <p>
                         Thank you,<br />
                         The System
@@ -128,6 +164,7 @@ exports.forgot =((req,res)=>{
                         res.json({email:true})
                     }
                 })
+            
            }else{
                res.json({email:false})
            }
