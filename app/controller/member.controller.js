@@ -4,8 +4,12 @@ let nodeMailer = require('nodemailer')
 let genarator = require('generate-password')
 
 exports.register=((req,res,next)=>{
-    
-    let password = req.body.password
+    const register ={}
+    // res.json(req.body)
+    if(req.body.password === req.body.confirmpass){
+       
+        let password = req.body.password
+   
     const saltRound = 10;
     bcrypt.genSalt(saltRound,function(err,salt){
         if(err){
@@ -17,64 +21,85 @@ exports.register=((req,res,next)=>{
                     console.log('hash error',err);
                     
                 }else{
-                    const register ={
-                        lisence : req.body.lisence,
-                        companyname : req.body.companyname,
-                        firstname : req.body.firstname,
-                        lastname : req.body.lastname,
-                        email:req.body.email,
-                        password:hash,
-                        address:req.body.address,
-                        contact:req.body.contact,
-                        role:req.body.role
-                    
+                    if(req.body.lisence){
+                        // regist spectific partner
+                        
+                        register.lisence = req.body.lisence,
+                        register.companyname = req.body.companyname,
+                        register.firstname = req.body.firstname,
+                        register.lastname = req.body.lastname,
+                        register.email = req.body.email,
+                        register.password = hash,
+                        register.address = req.body.address,
+                        register.contact = req.body.contact,
+                        register.role = "partner"
+    
+                        let user = new User(register)
+                            user.save(function(err){
+                                if(err){
+                                    
+                                    res.json({isRegist:"Please check your email or email"})
+                                    return next(err)
+                                }
+                                else{
+                                    res.json({isSuccess:"success"})
+                                }
+                            })
+
+
                     }
-                    let user = new User(register)
-                        user.save(function(err){
-                            if(err){
-                                
-                                res.json({regist:"Please check your email"})
-                                return next(err)
-                            }
-                            else{
-                                res.json({regist:"success"})
-                            }
-                        })
+                    
                 }
             })
         }
     })
 
-
-
-
+    }
+    else{
+        res.json({notMatch:"password is Match"})
+        
+    }
+    
 })
 
 exports.login =((req,res,next)=>{
     console.log(req.body);
+    if(req.body.remember =="remember"){
+        req.session.remember = true
+            req.session.email = req.body.email 
+            req.sessionOptions.maxAge = 1;
+    }
+    console.log('after',req.session);
+    
     let reqEmail = req.body.email;
     let reqPass = req.body.password
     User.findOne({email:reqEmail},"password",function(err,pass){
+    
         if(err){
+          
             return next(err)
         }else{
-            let hashString = pass
-            
-            bcrypt.compare(reqPass,hashString.password,function(err,isMatch){
-                if(err){
-                    console.log('error before hase',err);
-                    return next(err)
-                    
-                }else if(!isMatch){
-                    console.log('password is not incorrect');
-                    res.json({isPass:false})
-                    
-                }else{
-                    console.log('password is correct');
-                    res.json({isPass:true})
-                    
-                }
-            })
+            if(pass){
+                let hashString = pass
+           
+                    bcrypt.compare(reqPass,hashString.password,function(err,isMatch){
+                        if(err){
+                            console.log('error before hase',err);
+                            return next(err)
+                            
+                        }else if(!isMatch){
+                            console.log('password is not incorrect');
+                            res.json({isPass:"Please again Password invalid"})
+                            
+                        }else{
+                            console.log('password is correct');
+                            res.json({isSuccess:true})
+                            
+                        }
+                    })
+            }else{
+                res.json({isMail:"email is not incorrect"})
+            }
             
         }
     })
