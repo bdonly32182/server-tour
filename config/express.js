@@ -15,5 +15,6 @@ module.exports=()=>{
     app.use(bodyParser.json())
 
     require('../app/router/member.router')(app)
+    require('../app/router/approvePartner.router')(app)
     return app
 }

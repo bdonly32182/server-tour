@@ -1,4 +1,5 @@
 let User = require('mongoose').model("User")
+let ListPartner = require('mongoose').model('ListPartner')
 let bcrypt = require('bcryptjs')
 let nodeMailer = require('nodemailer')
 let genarator = require('generate-password')
@@ -31,11 +32,10 @@ exports.register=((req,res,next)=>{
                         register.email = req.body.email,
                         register.password = hash,
                         register.address = req.body.address,
-                        register.contact = req.body.contact,
-                        register.role = "partner"
+                        register.contact = req.body.contact
     
-                        let user = new User(register)
-                            user.save(function(err){
+                        let listpartner = new ListPartner(register)
+                            listpartner.save(function(err){
                                 if(err){
                                     
                                     res.json({isRegist:"Please check your email or email"})
@@ -63,24 +63,17 @@ exports.register=((req,res,next)=>{
 })
 
 exports.login =((req,res,next)=>{
-    console.log(req.body);
-    if(req.body.remember =="remember"){
-        req.session.remember = true
-            req.session.email = req.body.email 
-            req.sessionOptions.maxAge = 1;
-    }
-    console.log('after',req.session);
-    
+ 
     let reqEmail = req.body.email;
     let reqPass = req.body.password
-    User.findOne({email:reqEmail},"password",function(err,pass){
+    User.findOne({email:reqEmail},function(err,user){
     
         if(err){
           
             return next(err)
         }else{
-            if(pass){
-                let hashString = pass
+            if(user){
+                let hashString = user
            
                     bcrypt.compare(reqPass,hashString.password,function(err,isMatch){
                         if(err){
@@ -93,7 +86,7 @@ exports.login =((req,res,next)=>{
                             
                         }else{
                             console.log('password is correct');
-                            res.json({isSuccess:true})
+                            res.json({isSuccess:true,user})
                             
                         }
                     })
