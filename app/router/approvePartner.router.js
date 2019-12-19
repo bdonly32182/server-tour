@@ -5,5 +5,9 @@ module.exports=(app)=>{
         .get(approve.ShowlistPartner)
         .post(approve.ConfirmPartner)
 
-    app.delete('/approve/:companyname',approve.delPartner)
+    app.route('/approve/:id')
+        .get(approve.ReadPartner)
+        .delete(approve.delPartner)
+
+    app.param('id',approve.partnerByid)
 }

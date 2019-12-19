@@ -14,8 +14,8 @@ exports.ShowlistPartner =((req,res,next)=>{
 })
 
 exports.ConfirmPartner = (async(req,res,next)=>{
-    let {companyname} = req.body
- let result= await ListPartner.findOne({companyname:companyname},function(err,result){
+    let {companyname,lisence} = req.body
+ let result= await ListPartner.findOne({lisence:lisence},function(err,result){
         
         if(err){
             res.json(err)
@@ -26,8 +26,7 @@ exports.ConfirmPartner = (async(req,res,next)=>{
         }
     
     })
- console.log(result);
- 
+
     let user = new User(result)
     user.id = result.id
     user.isNew =true
@@ -42,16 +41,21 @@ exports.ConfirmPartner = (async(req,res,next)=>{
     result.remove()
     
 })
+exports.ReadPartner = ((req,res,next)=>{
+    res.json(req.list)
+})
 exports.delPartner =((req,res,next)=>{
-    let {companyname} = req.params
+   req.list.remove()
     
-    ListPartner.remove({companyname:companyname},function(err,delUser){
+})
+
+exports.partnerByid = ((req,res,next,id)=>{
+    ListPartner.findById({_id:id},function(err,listpartner){
         if(err){
             return next(err)
         }else{
-            res.json(delUser)
+            req.list = listpartner;
+            next();
         }
-        
     })
-    
 })
