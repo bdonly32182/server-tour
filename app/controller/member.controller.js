@@ -1,4 +1,4 @@
-let User = require('mongoose').model("User")
+let Partner = require('mongoose').model("Partner")
 let ListPartner = require('mongoose').model('ListPartner')
 let bcrypt = require('bcryptjs')
 let nodeMailer = require('nodemailer')
@@ -66,7 +66,7 @@ exports.login =((req,res,next)=>{
  
     let reqEmail = req.body.email;
     let reqPass = req.body.password
-    User.findOne({email:reqEmail},function(err,user){
+    Partner.findOne({email:reqEmail},function(err,user){
     
         if(err){
           
@@ -108,7 +108,7 @@ exports.forgot =((req,res,next)=>{
     
     console.log('passwords',passwords);
 
-    User.findOne({email:emails},'password',function(err,user){
+    Partner.findOne({email:emails},'password',function(err,user){
         
         
         if(err){
@@ -132,7 +132,7 @@ exports.forgot =((req,res,next)=>{
                                    
                                }else{
                                    
-                                User.findOneAndUpdate({email:emails},{password:hash},function(err,user){
+                                Partner.findOneAndUpdate({email:emails},{password:hash},function(err,Partner){
                                     
                                     if(err){
                                         return next(err)

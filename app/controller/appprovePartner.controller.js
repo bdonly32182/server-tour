@@ -1,5 +1,5 @@
 let ListPartner = require('mongoose').model('ListPartner')
-let User = require('mongoose').model('User')
+let Partner = require('mongoose').model('Partner')
 exports.ShowlistPartner =((req,res,next)=>{
     ListPartner.find({},function(err,list){
         console.log(list);
@@ -14,7 +14,7 @@ exports.ShowlistPartner =((req,res,next)=>{
 })
 
 exports.ConfirmPartner = (async(req,res,next)=>{
-    let {companyname,lisence} = req.body
+    let {lisence} = req.body
  let result= await ListPartner.findOne({lisence:lisence},function(err,result){
         
         if(err){
@@ -27,10 +27,10 @@ exports.ConfirmPartner = (async(req,res,next)=>{
     
     })
 
-    let user = new User(result)
-    user.id = result.id
-    user.isNew =true
-    user.save(function(err){
+    let partner = new Partner(result)
+    partner.id = result.id
+    partner.isNew =true
+    partner.save(function(err){
         if(err){
            return next(err)
         }else{
