@@ -7,5 +7,6 @@ module.exports=(app)=>{
     app.route("/api/tour/:id")
         .put(tour.UpdateTour)
         .delete(tour.DelTour)
+   
     app.param('id',tour.tourByid)
 }

@@ -2,7 +2,6 @@ let mongoose = require('mongoose')
 let Schema = mongoose.Schema
 
 let approveSchema = new Schema({
-    id:{type:String,index:true},
     lisence : {type:String,unique:true},
     companyname:String,
     firstname:String,
@@ -10,7 +9,8 @@ let approveSchema = new Schema({
     email:{type:String,unique:true,indexe:true},
     password:String,
     address:String,
-    contact:String
+    contact:String,
+    role:String
 })
 
 mongoose.model("ListPartner",approveSchema)

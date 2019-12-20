@@ -33,7 +33,8 @@ exports.register=((req,res,next)=>{
                         register.password = hash,
                         register.address = req.body.address,
                         register.contact = req.body.contact
-    
+                        register.role = "partner"
+                        
                         let listpartner = new ListPartner(register)
                             listpartner.save(function(err){
                                 if(err){
@@ -47,6 +48,18 @@ exports.register=((req,res,next)=>{
                             })
 
 
+                    }else{
+                        register.email = req.body.email
+                        register.password = hash
+                        register.role = "admin"
+                        let partner = new Partner(register)
+                        partner.save(function(err){
+                            if(err){
+                                res.status(404)
+                            }else{
+                                res.send('admin register sucess')
+                            }
+                        })
                     }
                     
                 }
@@ -62,38 +75,41 @@ exports.register=((req,res,next)=>{
     
 })
 
-exports.login =((req,res,next)=>{
+exports.login =(async(req,res,next)=>{
  
     let reqEmail = req.body.email;
     let reqPass = req.body.password
     Partner.findOne({email:reqEmail},function(err,user){
-    
+        
         if(err){
-          
+            
             return next(err)
         }else{
-            if(user){
-                let hashString = user
-           
-                    bcrypt.compare(reqPass,hashString.password,function(err,isMatch){
-                        if(err){
-                            console.log('error before hase',err);
-                            return next(err)
-                            
-                        }else if(!isMatch){
-                            console.log('password is not incorrect');
-                            res.json({isPass:"Please again Password invalid"})
-                            
-                        }else{
-                            console.log('password is correct');
-                            res.json({isSuccess:true,user})
-                            
-                        }
-                    })
-            }else{
-                res.json({isMail:"email is not incorrect"})
-            }
+            console.log('asdasd',user);
             
+                if(user){
+                    let hashString = user
+            
+                        bcrypt.compare(reqPass,hashString.password,function(err,isMatch){
+                            if(err){
+                                console.log('error before hase',err);
+                                return next(err)
+                                
+                            }else if(!isMatch){
+                                console.log('password is not incorrect');
+                                res.json({isPass:"Please again Password invalid"})
+                                
+                            }else{
+                                console.log('password is correct');
+                                res.json({isSuccess:true,user})
+                                
+                            }
+                        })
+                }
+                else{
+                    res.json({isMail:"email is not incorrect"})
+                }
+           
         }
     })
 })
@@ -106,7 +122,6 @@ exports.forgot =((req,res,next)=>{
         numbers:true
     })
     
-    console.log('passwords',passwords);
 
     Partner.findOne({email:emails},'password',function(err,user){
         

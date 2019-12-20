@@ -26,7 +26,7 @@ exports.ConfirmPartner = (async(req,res,next)=>{
         }
     
     })
-
+    
     let partner = new Partner(result)
     partner.id = result.id
     partner.isNew =true

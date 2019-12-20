@@ -1,5 +1,5 @@
 let Tour = require('mongoose').model("Tour")
-
+let Guide = require('mongoose').model("Guide")
 exports.CreateTour = ((req,res,next)=>{
     let tour = new Tour(req.body)
     tour.save(function(err){
