@@ -205,3 +205,4 @@ exports.forgot =((req,res,next)=>{
     }
     )
 })
+

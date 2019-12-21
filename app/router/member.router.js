@@ -5,5 +5,5 @@ module.exports =(app)=>{
         .post(member.login)
         
     app.post('/forgotpass',member.forgot)
-    
+  
 }

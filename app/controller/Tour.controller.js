@@ -13,6 +13,8 @@ exports.CreateTour = ((req,res,next)=>{
 
 exports.ListTour = ((req,res,next)=>{
         Tour.find({},function(err,tour){
+            console.log(tour);
+            
             if(err){
                 return next(err)
             }else{
@@ -20,8 +22,17 @@ exports.ListTour = ((req,res,next)=>{
             }
         })
 })
-exports.DelTour = ((req,res)=>{
-    req.tour.remove()
+exports.DelTour = (async(req,res)=>{
+   await req.tour.remove()
+   Tour.find({},function(err,tour){
+    console.log(tour);
+    
+    if(err){
+        return next(err)
+    }else{
+        res.json(tour)
+    }
+})
 })
 exports.UpdateTour = ((req,res,next)=>{
     console.log(req.tour);
