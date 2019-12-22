@@ -5,6 +5,7 @@ module.exports=(app)=>{
         .get(tour.ListTour)
         .post(tour.CreateTour)
     app.route("/api/tour/:id")
+        .get(tour.tourFetch)
         .put(tour.UpdateTour)
         .delete(tour.DelTour)
    

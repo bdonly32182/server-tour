@@ -9,13 +9,18 @@ let tourSchema = new Schema({
     highlight:String,
     Hotel:String,
     PathPictur:String,
+    Create_date: {
+        type: Date,
+        default: Date.now
+    },
     Guid:{
-        type:Schema.Types.ObjectId,
-        ref:"Guide"
+        type:[String]
     },
     Partner:{
-        type:Schema.Types.ObjectId,
-        ref:"Partner"
+        type:String
+    },
+    member:{
+        type:[String]
     }
 
 })

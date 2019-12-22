@@ -1,7 +1,10 @@
 let Tour = require('mongoose').model("Tour")
 let Guide = require('mongoose').model("Guide")
 exports.CreateTour = ((req,res,next)=>{
-    let tour = new Tour(req.body)
+    console.log(req.body);
+    const {form,users} = req.body
+    let tour = new Tour(form)
+        tour.Partner = users.user._id
     tour.save(function(err){
         if(err){
             return next()
@@ -21,6 +24,10 @@ exports.ListTour = ((req,res,next)=>{
                 res.json(tour)
             }
         })
+})
+exports.tourFetch =((req,res,next)=>{
+    res.json(req.tour
+        )
 })
 exports.DelTour = (async(req,res)=>{
    await req.tour.remove()
