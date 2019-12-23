@@ -53,6 +53,7 @@ exports.UpdateTour = ((req,res,next)=>{
     })
 })
 
+
 exports.tourByid = ((req,res,next,id)=>{
     Tour.findById({_id:id},function(err,tour){
         if(err){

@@ -17,5 +17,7 @@ module.exports=()=>{
     require('../app/router/member.router')(app)
     require('../app/router/approvePartner.router')(app)
     require('../app/router/tour.route')(app)
+    require('../app/router/guide.route')(app)
+
     return app
 }
