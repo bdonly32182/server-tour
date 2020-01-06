@@ -8,6 +8,7 @@ module.exports=(app)=>{
         .get(tour.tourFetch)
         .put(tour.UpdateTour)
         .delete(tour.DelTour)
-   
+    app.route('/api/tour/:user')
+        .get(tour.ListTour)
     app.param('id',tour.tourByid)
 }

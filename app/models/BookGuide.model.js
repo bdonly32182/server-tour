@@ -12,6 +12,10 @@ let BookSchema  = new Schema({
     user:{
         type:Schema.Types.ObjectId,
         ref:"User"
+    },
+    mount:{
+        type:Schema.Types.ObjectId,
+        ref:"Category"
     }
 })
 

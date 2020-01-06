@@ -10,12 +10,14 @@ exports.listGuide =((req,res,next)=>{
 })
 exports.createGuide =((req,res,next)=>{
     const{form,users} = req.body
+
     const guide = new Guide(form)
         guide.Partner = users.user._id
         guide.save(function(er){
-            if(er){
+            if(er){     
                 res.status(404)
             }else{
+
                 res.json({isSave:"Create Guide Success"})
             }
         })

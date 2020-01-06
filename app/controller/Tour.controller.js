@@ -15,6 +15,8 @@ exports.CreateTour = ((req,res,next)=>{
 })
 
 exports.ListTour = ((req,res,next)=>{
+    console.log('req.params',req.params);
+    
         Tour.find({},function(err,tour){
             console.log(tour);
             
