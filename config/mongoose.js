@@ -10,5 +10,6 @@ module.exports =()=>{
     require('../app/models/User.model')
     require('../app/models/Guide.model')
     require('../app/models/BookGuide.model')
+    require('../app/models/UserOrder.model')
     return db
 }

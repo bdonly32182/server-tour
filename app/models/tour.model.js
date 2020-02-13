@@ -14,13 +14,14 @@ let tourSchema = new Schema({
         default: Date.now
     },
     Guid:{
-        type:[String]
+        type:String
     },
     Partner:{
         type:String
     },
     member:{
-        type:[String]
+        type:[Object]
+        
     }
 
 })

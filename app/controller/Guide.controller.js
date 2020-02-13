@@ -1,10 +1,11 @@
 const Guide = require('mongoose').model('Guide')
+const Tour = require('mongoose').model('Tour')
 exports.listGuide =((req,res,next)=>{
     Guide.find({},function(err,guide){
         if(err){
             res.json({err:err})
         }else{
-            res.json(guide)
+            res.json({guide:guide})
         }
     })
 })
@@ -21,6 +22,34 @@ exports.createGuide =((req,res,next)=>{
                 res.json({isSave:"Create Guide Success"})
             }
         })
+})
+exports.Assignment =((req,res,next)=>{
+    const {guidId,assignTour} = req.body
+
+    Tour.findOne({tourName:assignTour})
+    .then(async result=>{
+        if(result.Guid){
+            Guide.find({})
+            .then(guide=>{
+                res.json({msg:'Tour is Exist Guide',guide:guide})
+            })
+        }else{
+           result.Guid = guidId
+      await  result.save()
+        Guide.findOne({_id:guidId})
+            .then(async result =>{
+                console.log(result);
+                result.Status = true
+               await result.save()
+                Guide.find({})
+                    .then(guide=>{
+                        res.json({guide:guide})
+                    })
+            }) 
+        }
+        
+    })
+    
 })
 exports.Readguide =((req,res,next)=>{
     res.json(req.guide)
@@ -40,7 +69,7 @@ exports.DelGuide =(async(req,res,next)=>{
         if(err){
             res.status(404)
         }else{
-            res.json(guide)
+            res.json({guide:guide})
         }
     })
 

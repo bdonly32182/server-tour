@@ -8,6 +8,7 @@ module.exports =(app)=>{
         .get(guide.Readguide)
         .put(guide.UpdateGuide)
         .delete(guide.DelGuide)
-
+    app.route('/api/guide/assign')
+        .post(guide.Assignment)
     app.param('id',guide.guideById)
 }

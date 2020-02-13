@@ -3,7 +3,7 @@ let ListPartner = require('mongoose').model('ListPartner')
 let bcrypt = require('bcryptjs')
 let nodeMailer = require('nodemailer')
 let genarator = require('generate-password')
-
+const jwt = require('jsonwebtoken')
 exports.register=((req,res,next)=>{
     const register ={}
     // res.json(req.body)
@@ -79,6 +79,14 @@ exports.login =(async(req,res,next)=>{
  
     let reqEmail = req.body.email;
     let reqPass = req.body.password
+    // let user ={
+    //     email:reqEmail,
+    //     password:reqPass
+    // }
+    // jwt.sign({user},'secretKey',(err,token)=>{
+    //     console.log(token);
+        
+    // })
     Partner.findOne({email:reqEmail},function(err,user){
         
         if(err){

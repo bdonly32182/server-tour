@@ -1,8 +1,12 @@
 let Tour = require('mongoose').model("Tour")
 let Guide = require('mongoose').model("Guide")
 exports.CreateTour = ((req,res,next)=>{
-    console.log(req.body);
-    const {form,users} = req.body
+    // console.log(req.body);
+    console.log();
+    
+    const {form,users,formData} = req.body
+    console.log(formData);
+    
     let tour = new Tour(form)
         tour.Partner = users.user._id
     tour.save(function(err){
@@ -12,18 +16,32 @@ exports.CreateTour = ((req,res,next)=>{
             res.json({Save:"success"})
         }
     })
+    
 })
 
 exports.ListTour = ((req,res,next)=>{
-    console.log('req.params',req.params);
-    
         Tour.find({},function(err,tour){
             console.log(tour);
             
             if(err){
                 return next(err)
             }else{
-                res.json(tour)
+             let Count=   tour.map(t => {
+                //  console.log(t.member);
+                 
+                 return t.member
+                })
+                .map(mem=>{
+                 return   mem.map(e=>{
+                     return amount = parseInt(e.amountMember)
+                 }).reduce((ret,current)=>{
+                    return ret + current
+                    },0)
+                })
+              
+                console.log(Count);
+                
+                res.json({tour,Count})
             }
         })
 })
