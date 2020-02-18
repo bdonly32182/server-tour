@@ -1,7 +1,7 @@
 const Guide = require('mongoose').model('Guide')
 const Tour = require('mongoose').model('Tour')
 exports.listGuide =((req,res,next)=>{
-    Guide.find({},function(err,guide){
+    Guide.find({Partner:req.user.id},function(err,guide){
         if(err){
             res.json({err:err})
         }else{
@@ -11,9 +11,11 @@ exports.listGuide =((req,res,next)=>{
 })
 exports.createGuide =((req,res,next)=>{
     const{form,users} = req.body
-
+    console.log(users);
+    
     const guide = new Guide(form)
-        guide.Partner = users.user._id
+        guide.Partner = users._id
+        guide.Status = false
         guide.save(function(er){
             if(er){     
                 res.status(404)
@@ -23,34 +25,44 @@ exports.createGuide =((req,res,next)=>{
             }
         })
 })
-exports.Assignment =((req,res,next)=>{
-    const {guidId,assignTour} = req.body
+// exports.Assignment =((req,res,next)=>{
+//     const {guidId,assignTour} = req.body
 
-    Tour.findOne({tourName:assignTour})
-    .then(async result=>{
-        if(result.Guid){
-            Guide.find({})
-            .then(guide=>{
-                res.json({msg:'Tour is Exist Guide',guide:guide})
-            })
-        }else{
-           result.Guid = guidId
-      await  result.save()
-        Guide.findOne({_id:guidId})
-            .then(async result =>{
-                console.log(result);
-                result.Status = true
-               await result.save()
-                Guide.find({})
-                    .then(guide=>{
-                        res.json({guide:guide})
-                    })
-            }) 
-        }
+//     Tour.findOne({tourName:assignTour})
+//     .then(async result=>{
+//         console.log(result);
+//     //     result.Round.push({day:"1-2",guide:""})
+//     //    await result.save()
+//     //    let forAssign= result.Round.filter(round =>{
+//     //        console.log(round);
+           
+//     //         // return round.guide == ""
+//     //     })
+//         // console.log(forAssign);
         
-    })
+//     //     if(result.Guid){
+//     //         Guide.find({})
+//     //         .then(guide=>{
+//     //             res.json({msg:'Tour is Exist Guide',guide:guide})
+//     //         })
+//     //     }else{
+//     //        result.Guid = guidId
+//     //   await  result.save()
+//     //     Guide.findOne({_id:guidId})
+//     //         .then(async result =>{
+//     //             console.log(result);
+//     //             result.Status = true
+//     //            await result.save()
+//     //             Guide.find({})
+//     //                 .then(guide=>{
+//     //                     res.json({guide:guide})
+//     //                 })
+//     //         }) 
+//     //     }
+        
+//     })
     
-})
+// })
 exports.Readguide =((req,res,next)=>{
     res.json(req.guide)
 })

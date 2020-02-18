@@ -5,16 +5,12 @@ let tourSchema = new Schema({
     tourName:String,
     place:String,
     description:String,
-    duration:String,
-    highlight:String,
+    highlight:[String],
     Hotel:String,
-    PathPictur:String,
+    PathPictur:[String],
     Create_date: {
         type: Date,
         default: Date.now
-    },
-    Guid:{
-        type:String
     },
     Partner:{
         type:String
@@ -22,7 +18,10 @@ let tourSchema = new Schema({
     member:{
         type:[Object]
         
-    }
+    },
+    Round:[Object],
+    Amountroom:Number,
+    price:Number
 
 })
 

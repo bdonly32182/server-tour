@@ -5,10 +5,12 @@ let OrderSchema = new Schema({
     userId:String,
     tourId:String,
     amountMember:String,
+    partnerId:String,
     OrderDate:{
         type: Date,
         default:Date.now
-    }
+    },
+    pathPicPay:String
             
 })
 

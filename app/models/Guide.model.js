@@ -9,7 +9,7 @@ let GuideSchema = new Schema({
     Password:String,
     Address:String,
     Tel:String,
-    Status:false,
+    Status:Boolean,
     Partner:{
         type:String
     },

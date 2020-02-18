@@ -1,7 +1,8 @@
 let Order = require('mongoose').model('Order')
 let Tour = require('mongoose').model('Tour')
+let fs = require('fs')
 exports.listOrder =(req,res)=>{
-    Order.find({},function(err,result){
+    Order.find({partnerId:req.user.id},function(err,result){
         if(err){
             res.sendStatus(403)
         }else{
@@ -33,7 +34,7 @@ exports.approveOrder = async(req,res)=>{
         amountMember:amountMember,
         orderDate:orderDate
     }
-    console.log(order);
+    console.log(req.body);
     
     
   await  Tour.findById({_id:tourId},async function (err,result){
@@ -45,7 +46,7 @@ exports.approveOrder = async(req,res)=>{
                  result.save()
                 await req.order.remove()
                 console.log('remove');
-                Order.find({},function(err,order){
+                Order.find({partnerId:req.body._id},function(err,order){
                     console.log('order after remobe',order);
                     if(err){
                         res.sendStatus(403)
@@ -58,19 +59,7 @@ exports.approveOrder = async(req,res)=>{
     })
     
 }
-exports.test =((req,res)=>{
-    
 
-// Tour.find({tourName:"Tour JAPAN"},function(err,result){
-//         result[0].member.map(mem=>{
-//             console.log(mem.amountMember);
-            
-//         })
-//     })
-    res.send('thank')
- 
- 
-})
 exports.orderByid = ((req,res,next,id)=>{
     Order.findById({_id:id},function(err,order){
         if(err){

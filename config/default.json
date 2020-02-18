@@ -1,0 +1,5 @@
+{
+     "mongoAtlas" : "mongodb+srv://bdonly32182:bestdangonly4@projecttour-d8nbx.mongodb.net/test?retryWrites=true&w=majority",
+     "jwtSecret" :"jwtSecretKey"
+
+}

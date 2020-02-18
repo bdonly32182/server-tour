@@ -10,6 +10,7 @@ let UserSchema = new Schema({
     password:String,
     address:String,
     contact:String,
+    point:Number,
     role:String
 
 })

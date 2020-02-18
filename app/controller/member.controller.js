@@ -4,6 +4,7 @@ let bcrypt = require('bcryptjs')
 let nodeMailer = require('nodemailer')
 let genarator = require('generate-password')
 const jwt = require('jsonwebtoken')
+let config = require('config')
 exports.register=((req,res,next)=>{
     const register ={}
     // res.json(req.body)
@@ -43,6 +44,7 @@ exports.register=((req,res,next)=>{
                                     return next(err)
                                 }
                                 else{
+                                    
                                     res.json({isSuccess:"success"})
                                 }
                             })
@@ -79,14 +81,7 @@ exports.login =(async(req,res,next)=>{
  
     let reqEmail = req.body.email;
     let reqPass = req.body.password
-    // let user ={
-    //     email:reqEmail,
-    //     password:reqPass
-    // }
-    // jwt.sign({user},'secretKey',(err,token)=>{
-    //     console.log(token);
-        
-    // })
+   
     Partner.findOne({email:reqEmail},function(err,user){
         
         if(err){
@@ -109,7 +104,17 @@ exports.login =(async(req,res,next)=>{
                                 
                             }else{
                                 console.log('password is correct');
-                                res.json({isSuccess:true,user})
+                                jwt.sign({id:user.id,role:user.role,firstname:user.firstname},
+                                    config.get('jwtSecret'),
+                                    {expiresIn:'1days'},
+                                    (err,token)=>{
+                                        if(err) throw err
+                                        res.json({
+                                            token,
+                                            isSuccess:true,
+                                            user})
+                                    })
+                                
                                 
                             }
                         })
@@ -214,3 +219,8 @@ exports.forgot =((req,res,next)=>{
     )
 })
 
+exports.loadUser = ((req,res,next)=>{
+   
+    Partner.findById(req.user.id)
+    .then(user=> res.json(user))
+})
