@@ -10,5 +10,9 @@ module.exports=(app)=>{
         .delete(auth,tour.DelTour)
     app.route('/api/tour/:user')
         .get(tour.ListTour)
+    app.get('/api/Ntour',tour.Alltoure)
+    app.get('/api/partners',tour.ListPartner)//list partner
+    app.get('/list/tour/partner/:_id',tour.tour_partner)
+    // app.post('/api/location',tour.location)
     app.param('id',tour.tourByid)
 }

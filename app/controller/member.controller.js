@@ -8,6 +8,8 @@ let config = require('config')
 exports.register=((req,res,next)=>{
     const register ={}
     // res.json(req.body)
+    console.log(req.body);
+
     if(req.body.password === req.body.confirmpass){
        
         let password = req.body.password
@@ -18,13 +20,22 @@ exports.register=((req,res,next)=>{
             console.log('error ',err);
             
         }else{
-            bcrypt.hash(password,salt,function(err,hash){
+            bcrypt.hash(password,salt,async function(err,hash){
                 if(err){
                     console.log('hash error',err);
                     
                 }else{
                     if(req.body.lisence){
                         // regist spectific partner
+                        if(req.files){                            
+                           const file = req.files.file 
+                           console.log(file);
+                           
+                         await  file.mv('public/image/'+file.name, function(err){
+                               if(err) throw err
+                           })
+                           register.picprofile = `/image/${file.name}`
+                        }
                         
                         register.lisence = req.body.lisence,
                         register.companyname = req.body.companyname,
@@ -45,12 +56,12 @@ exports.register=((req,res,next)=>{
                                 }
                                 else{
                                     
-                                    res.json({isSuccess:"success"})
+                                    res.json({RegistSuccess:"success"})
                                 }
                             })
 
 
-                    }else{
+                    } else{
                         register.email = req.body.email
                         register.password = hash
                         register.role = "admin"
@@ -78,10 +89,11 @@ exports.register=((req,res,next)=>{
 })
 
 exports.login =(async(req,res,next)=>{
- 
+    console.log('lossss',req.body);
+    
     let reqEmail = req.body.email;
     let reqPass = req.body.password
-   
+
     Partner.findOne({email:reqEmail},function(err,user){
         
         if(err){
@@ -165,6 +177,7 @@ exports.forgot =((req,res,next)=>{
                                     if(err){
                                         return next(err)
                                     }else{
+
                                         res.send('send password to Email success')
                                     }
                                 })
@@ -199,12 +212,12 @@ exports.forgot =((req,res,next)=>{
                 };
                 transpoter.sendMail(mailOptions,(err,info)=>{
                     if(err){
-                        res.json({email:err.message})
+                        // res.json({email:err.message})
                         return next(err)
                         
                     }else{
                         console.log('email send ',info.response);
-                        res.json({email:true})
+                        // res.json({email:true})
                     }
                 })
             
@@ -223,4 +236,57 @@ exports.loadUser = ((req,res,next)=>{
    
     Partner.findById(req.user.id)
     .then(user=> res.json(user))
+})
+
+exports.arr=((req,res)=>{
+
+    let data =[{id:'10',content:'best'},{id:'11',content:'man'}]
+    let obj ={}
+    data.map((data,i)=>{
+        obj[`${data.id}`] = {id:data.id,content:data.content}
+    })
+    console.log(obj);
+    
+    res.json(data)
+    
+   
+    
+    
+})
+
+exports.testmail =((req,res)=>{
+    // https://www.google.com/settings/security/lesssecureapps  ขออนุญาติ ลดความปลอดภัยของเมล เพื่อให้สามารถส่งได้
+    var transpoter = nodeMailer.createTransport({
+        service: 'Gmail',  
+        auth: {
+            user: 'tourject@gmail.com',
+            pass: 'besttour'
+        },
+        // tls: {
+        //     rejectUnauthorized: false
+        // }
+    });
+    var mailOptions = {
+        from: 'tourject@gmail.com',
+        to: req.body.email,
+        subject: 'Sending Email using Node.js',
+        html: `  <h3>Reset Your Password</h3>
+        <p>We received a request to reset your password. If you did not make this request, simply ignore this email.</p>
+        
+        <p>Note:YOUR PASSWORD is <b> Test Send Email</b></p>
+        <p>
+            Thank you,<br />
+            The System
+        </p>`
+    };
+    transpoter.sendMail(mailOptions,(err,info)=>{
+        if(err){
+            res.json({email:err.message})
+             throw err
+            
+        }else{
+            console.log('email send ',info.response);
+            res.json({email:true})
+        }
+    })
 })

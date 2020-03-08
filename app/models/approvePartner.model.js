@@ -10,7 +10,9 @@ let approveSchema = new Schema({
     password:String,
     address:String,
     contact:String,
-    role:String
+    role:String, 
+    picprofile:String
+
 })
 
 mongoose.model("ListPartner",approveSchema)

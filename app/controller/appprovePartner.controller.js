@@ -1,5 +1,7 @@
 let ListPartner = require('mongoose').model('ListPartner')
 let Partner = require('mongoose').model('Partner')
+let nodeMailer = require('nodemailer')
+
 exports.ShowlistPartner =((req,res,next)=>{
     ListPartner.find({},function(err,list){
         console.log(list);
@@ -18,18 +20,49 @@ exports.ConfirmPartner = (async(req,res,next)=>{
  let result= await ListPartner.findOne({lisence:lisence}, function(err,result){
         
         if(err){
-            res.json(err)
             return next(err)
         }else{ 
+            var transpoter = nodeMailer.createTransport({
+                service: 'gmail',  
+                auth: {
+                    user: 'tourject@gmail.com',
+                    pass: 'besttour'
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
+            });
+            var mailOptions = {
+                from: 'tourject@gmail.com',
+                to: result.email,
+                subject: 'Sending Email using Node.js',
+                html: `  <h3>คุณได้รับการอนุมัติการเข้าร่วมจากแอดมินแล้ว</h3>
+                <p>We received a request to reset your password. If you did not make this request, simply ignore this email.</p>
+                
+                
+                <p>
+                    Thank you,<br />
+                    
+                </p>`
+            };
+          transpoter.sendMail(mailOptions,(err,info)=>{
+                if(err){
+                    console.log('send mail eror',err);
+                    
+                    
+                }else{
+                    console.log('email send ',info.response);
+                }
+            })
              let partner = new Partner(result)
-                partner.id = result.id
+                partner._id = result._id
+                partner.point=0
                 partner.isNew =true
                 partner.save(async function(err){
                     if(err){
                     return next(err)
                     }else{
-                       console.log('save success');
-                      await  result.remove()
+                       await result.remove()
                         ListPartner.find({},function(err,list){
                             console.log(list);
                             if(err){

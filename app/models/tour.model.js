@@ -6,8 +6,9 @@ let tourSchema = new Schema({
     place:String,
     description:String,
     highlight:[String],
-    Hotel:String,
+    Hotel:[String],
     PathPictur:[String],
+    PDF:[String],
     Create_date: {
         type: Date,
         default: Date.now
@@ -19,10 +20,7 @@ let tourSchema = new Schema({
         type:[Object]
         
     },
-    Round:[Object],
-    Amountroom:Number,
-    price:Number
-
+    Round:[Object]
 })
 
 mongoose.model("Tour",tourSchema)

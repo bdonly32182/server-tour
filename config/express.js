@@ -7,7 +7,9 @@ let fileUpload = require('express-fileupload')
 module.exports=()=>{
     let app = express()
     app.use(cors())
-    app.use(fileUpload())
+    app.use(fileUpload({
+        limitHandler:{fileSize:50*1024*1024}
+    }))
     app.use(bodyParser.urlencoded({
         extended:true
     }))
@@ -22,5 +24,8 @@ module.exports=()=>{
     require('../app/router/tour.route')(app)
     require('../app/router/guide.route')(app)
     require('../app/router/UserOrder.router')(app)
+    require('../app/router/user.route')(app)
+    require('../app/router/RNguide.route')(app)
+    require('../app/router/Location.Route')(app)
     return app
 }

@@ -11,7 +11,8 @@ let UserSchema = new Schema({
     address:String,
     contact:String,
     point:Number,
-    role:String
+    role:String,
+    picprofile:String
 
 })
 

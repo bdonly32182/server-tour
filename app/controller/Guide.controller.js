@@ -1,5 +1,15 @@
 const Guide = require('mongoose').model('Guide')
 const Tour = require('mongoose').model('Tour')
+const fs = require('fs')
+exports.guideAssign =((req,res)=>{
+    Guide.find({Partner:req.user.id,Status:false})
+        .then(guide=>{
+            res.json({guide:guide})
+        }).catch(e=>{
+            console.log('catch');
+            
+        })
+})
 exports.listGuide =((req,res,next)=>{
     Guide.find({Partner:req.user.id},function(err,guide){
         if(err){
@@ -9,18 +19,43 @@ exports.listGuide =((req,res,next)=>{
         }
     })
 })
-exports.createGuide =((req,res,next)=>{
-    const{form,users} = req.body
-    console.log(users);
+exports.createGuide =(async(req,res,next)=>{
+    const{form,Partner} = req.body
+    console.log(req.body);
+    console.log(req.files);
     
-    const guide = new Guide(form)
-        guide.Partner = users._id
+    
+    let guide = new Guide(req.body)
+    try{
+        console.log('try');
+        
+      await  fs.mkdirSync(`public/image/${req.body.license}`)
+      if (req.files) {
+        console.log('filesave');
+            let file = req.files.file
+          await   file.mv(`public/image/${req.body.license}/${file.name}`,function(err,result){
+                if(err) throw err
+                  guide.Profile == `/image/${req.body.license}/${file.name}`
+            })
+          
+         }else{
+             console.log('exist file');
+             
+         }
+        
+    }catch(e){
+        console.log('exist folder');
+        
+    }
+        
         guide.Status = false
+        guide.Role = "guide"
         guide.save(function(er){
+
             if(er){     
                 res.status(404)
             }else{
-
+            console.log('save');
                 res.json({isSave:"Create Guide Success"})
             }
         })

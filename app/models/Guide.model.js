@@ -13,7 +13,8 @@ let GuideSchema = new Schema({
     Partner:{
         type:String
     },
-    Role:String
+    Role:String,
+    profile:String
 
 })
 

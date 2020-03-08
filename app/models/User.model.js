@@ -2,12 +2,13 @@ let mongoose = require('mongoose')
 let Schema = mongoose.Schema
 
 let UserScema = new Schema({
-    Email:{type:String,unique:true,index:true},
-    Password:String,
-    Firstnamr:String,
-    Lastname:String,
-    Address:String,
-    Tel:String
+    email:{type:String,unique:true},
+    password:String,
+    fullname:String,
+    address:String,
+    contact:String,
+    profile:String,
+    role:String
 })
 
 mongoose.model("User",UserScema)

@@ -7,4 +7,8 @@ module.exports =(app)=>{
         
     app.post('/forgotpass',member.forgot)
     app.get('/api/auth/user',auth,member.loadUser)
+
+    app.post('/array',member.arr)
+    app.post('/testmail',member.testmail)
+    
 }
