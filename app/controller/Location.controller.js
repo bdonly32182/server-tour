@@ -17,3 +17,14 @@ exports.getLocation =((req,res)=>{
                 res.json(location)
             })
 })
+exports.deLocationTracking =((req,res)=>{
+    req.location.remove()
+    res.sendStatus(200)
+})
+exports.paramLocation =((req,res,next,userId)=>{
+    Location.findOne({userId:userId})
+            .then(location =>{
+                req.location = location
+                next()
+            })
+})

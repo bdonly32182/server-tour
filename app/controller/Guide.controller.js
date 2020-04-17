@@ -10,6 +10,16 @@ exports.guideAssign =((req,res)=>{
             
         })
 })
+exports.editAssign =((req,res)=>{
+    //หน้า edit
+    Guide.find({Partner:req.user.id})
+    .then(guide=>{
+        res.json({guide:guide})
+    }).catch(e=>{
+        console.log('catch');
+        
+    })
+})
 exports.listGuide =((req,res,next)=>{
     Guide.find({Partner:req.user.id},function(err,guide){
         if(err){
@@ -35,9 +45,9 @@ exports.createGuide =(async(req,res,next)=>{
             let file = req.files.file
           await   file.mv(`public/image/${req.body.license}/${file.name}`,function(err,result){
                 if(err) throw err
-                  guide.Profile == `/image/${req.body.license}/${file.name}`
+                 
             })
-          
+           guide.profile = `/image/${req.body.license}/${file.name}`
          }else{
              console.log('exist file');
              
@@ -45,7 +55,19 @@ exports.createGuide =(async(req,res,next)=>{
         
     }catch(e){
         console.log('exist folder');
-        
+        if (req.files) {
+            console.log('filesave');
+                let file = req.files.file
+              await   file.mv(`public/image/${req.body.license}/${file.name}`,function(err,result){
+                    if(err) throw err
+                     
+                })
+               guide.profile = `/image/${req.body.license}/${file.name}`
+             }else{
+                 console.log('exist file');
+                 
+             }
+       
     }
         
         guide.Status = false
@@ -60,44 +82,21 @@ exports.createGuide =(async(req,res,next)=>{
             }
         })
 })
-// exports.Assignment =((req,res,next)=>{
-//     const {guidId,assignTour} = req.body
-
-//     Tour.findOne({tourName:assignTour})
-//     .then(async result=>{
-//         console.log(result);
-//     //     result.Round.push({day:"1-2",guide:""})
-//     //    await result.save()
-//     //    let forAssign= result.Round.filter(round =>{
-//     //        console.log(round);
-           
-//     //         // return round.guide == ""
-//     //     })
-//         // console.log(forAssign);
-        
-//     //     if(result.Guid){
-//     //         Guide.find({})
-//     //         .then(guide=>{
-//     //             res.json({msg:'Tour is Exist Guide',guide:guide})
-//     //         })
-//     //     }else{
-//     //        result.Guid = guidId
-//     //   await  result.save()
-//     //     Guide.findOne({_id:guidId})
-//     //         .then(async result =>{
-//     //             console.log(result);
-//     //             result.Status = true
-//     //            await result.save()
-//     //             Guide.find({})
-//     //                 .then(guide=>{
-//     //                     res.json({guide:guide})
-//     //                 })
-//     //         }) 
-//     //     }
-        
-//     })
-    
-// })
+exports.cancleAssign =((req,res)=>{
+    //ลบรอบแล้ว เปลี่ยนสถานะไกด์
+    console.log(req.guide);
+    console.log(req.params.id);
+    Guide.findById({_id:req.params.id})
+        .then(guide =>{
+            guide.Status = false
+            guide.save()
+            res.json({msg:'success'})
+        }).catch(e=>{
+            console.log('catch guide line 95');
+            
+        })
+   
+})
 exports.Readguide =((req,res,next)=>{
     res.json(req.guide)
 })
@@ -106,19 +105,15 @@ exports.UpdateGuide =((req,res,next)=>{
         if(err){
             res.status(404)
         }else{
-            res.json(guide)
+            // res.json(guide)
+            res.json({msg:'edit guide success',guide})
         }
     })
 })
 exports.DelGuide =(async(req,res,next)=>{
-    await req.guide.remove()
-    Guide.find({},function(err,guide){
-        if(err){
-            res.status(404)
-        }else{
-            res.json({guide:guide})
-        }
-    })
+     req.guide.remove()
+     res.json({msg:'delete success'})
+    
 
 })
 exports.guideById =((req,res,next,id)=>{

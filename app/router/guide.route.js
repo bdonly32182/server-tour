@@ -11,5 +11,7 @@ module.exports =(app)=>{
     // app.route('/api/guide/assign')
     //     .post(auth,guide.Assignment)
     app.get('/api/guideAssign',auth,guide.guideAssign)
+    app.get('/api/editAssign',auth,guide.editAssign)
+    app.put('/api/cancleAssign/:id',guide.cancleAssign)
     app.param('id',guide.guideById)
 }

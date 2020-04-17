@@ -81,7 +81,7 @@ exports.user_login =((req,res)=>{
                     }
                 })
             }else{
-                res.json({msg:"Check your Email "})
+                res.json({msg:"Check your Email ",isLogin:false})
             }
         })
     

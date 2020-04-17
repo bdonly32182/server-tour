@@ -5,6 +5,8 @@ let Partner = require('mongoose').model('Partner')
 let fs = require('fs')
 let qrcode = require('qrcode')
 let generatePayload = require('promptpay-qr')
+let nodeMailer = require('nodemailer')
+
 exports.listOrder =async(req,res)=>{
     //แก้ปัญหา res.send in map func โดยการใช้ promise
     let myFirstPromise = new Promise((resolve, reject) => {
@@ -21,7 +23,7 @@ exports.listOrder =async(req,res)=>{
                                 resolve(arr) // resolve is .then && reject is catch 
                             }else{
                                 console.log('no data');
-                                
+                                resolve([])
                             }
                                     
                      })   
@@ -110,45 +112,73 @@ exports.Generate=((req,res)=>{
             })
 })
 exports.approveOrder = async(req,res)=>{
-    const {_id,userId,tourId,amountMember,OrderDate} = req.body
+    const {_id,userId,tourId,amountMember,OrderDate,round,amountRoom} = req.body
     console.log(req.body);
     const PromiseFunc = new Promise((resolve,reject)=>{
         let arr =[]
-       Order.findById({_id:_id})
-        .then(async(order)=>{
-            console.log(order);
-            
-            Tour.findById({_id:tourId})
-                .then(async(tour)=>{
-                     
-                    order.isApprove = true
-                    await order.save()
-                    tour.member.push(order)
-                   console.log(order.isApprove);
-                   await tour.save()
-                    Tour.find({Partner:req.user.id})
-                        .then((tour)=>{
-                            tour.map(tour=>{
-                                Order.find({tourId:tour._id,isApprove:false})
-                                    .then(order=>{
-                                        order.map(async (order)=>{
-                                           await arr.push(order)
-                                        })
-                                        if(arr.length >0){
-                                            resolve(arr) 
-                                        }else{
-                                            console.log('no data');
-                                            resolve([])
-                                        }
-                                    })
-                            })
-                        })
+        User.findById({_id:userId})
+            .then(user=>{
+                var transpoter = nodeMailer.createTransport({
+                    service: 'gmail',  
+                    auth: {
+                        user: 'tourject@gmail.com',
+                        pass: 'besttour'
+                    },
+                    tls: {
+                        rejectUnauthorized: false
+                    }
+                });
+                var mailOptions = {
+                    from: 'tourject@gmail.com',
+                    to: user.email,
+                    subject: 'ยืนยันการซื้อทัวร์',
+                    html: `  <h3>ได้รับการยืนยันเข้าร่วมทัวร์แล้วค่ะ</h3>
+                   
+                    
+                    
+                    <p>
+                        Thank you,<br />
+                        
+                    </p>`
+                };
+              transpoter.sendMail(mailOptions,(err,info)=>{
+                    if(err){
+                        console.log('send mail eror',err);
+                        
+                        
+                    }else{
+                        console.log('email send ',info.response);
+                    }
                 })
+            })
+            // set approve is true
+        Order.updateOne({_id:_id},{$set:{isApprove:true}})
+        .then(result => {
+            console.log('set isApprove success');
+            // resolve({msg:'approve order success'})
+        })
+        .catch(e=>{
+            console.log('set is Approve Fail');
+            
+        })
+
+        //  reduce  totalroom in tour
+        Tour.updateOne({_id:tourId,
+            Round:{$elemMatch:{duration:round}}},
+            // {$set:{"Round.$.totalroom":{$inc:{"Round.$.totalroom":- amountRoom}}}}
+            //Round.$.totalroom ใช้กับ array elemMatch ถ้าเป็นปกติใช้ "Round.totalroom"
+            {$inc:{"Round.$.totalroom":- amountRoom}}
+            ).then(result =>{
+                console.log('set total room success');
+                resolve({msg:'approve order success'})
+
+            }).catch(e=>{
+                console.log('set totalroom fail');
                 
-        }) 
+            })
+   
     })
     PromiseFunc.then(result=>{
-        console.log('result',result);
         res.json(result)
         
     })
@@ -178,9 +208,20 @@ exports.order=(async(req,res)=>{
                 })
     res.json(order)
 })
+exports.partnerDeleteOrder =((req,res)=>{
+    req.order.remove()
+    res.json({msg:'delete success'})
+})
 exports.RNOrderlist =((req,res)=>{
     console.log(req.user.id);
-    
+    // Order.findOne({userId:req.user.id})
+    //         .then(order=>{
+    //             res.json(order)
+    //         }).catch(e=>{
+    //             console.log('catch UserOrder line 227');
+                
+    //         })
+    // แบบเก่า
     const PromiseFunc = new Promise(async(resolve,reject)=>{
         let arr =[]
         
@@ -192,25 +233,25 @@ exports.RNOrderlist =((req,res)=>{
                     resolve(toursTrue)
                 // await   arr.push({isTrue:toursTrue})
                 })
-    //  await   Order.find({userId:req.user.id,isApprove:false})
-    //             .then(async orders=>{
-    //          await orders.map(async order=>{
-    //                    await Tour.find({_id:order.tourId})
-    //                         .then(async toursFalse=>{
+     await   Order.find({userId:req.user.id,isApprove:false})
+                .then(async orders=>{
+             await orders.map(async order=>{
+                       await Tour.find({_id:order.tourId})
+                            .then(async toursFalse=>{
                               
-    //                           await  (arr.push({isFalse:toursFalse}))
+                              await  (arr.push({isFalse:toursFalse}))
                              
-    //                         })
+                            })
                           
-    //                         // มีทัวร์ที่ยังไม่อนุญาติเข้าไป
-    //                    resolve(arr)      
-    //                 })
+                            // มีทัวร์ที่ยังไม่อนุญาติเข้าไป
+                       resolve(arr)      
+                    })
                    
                     
                     
-    //             })
+                })
                 //อนุญาติมหมดทุกทัวร์
-        //  resolve(arr) 
+         resolve(arr) 
           
      })
     PromiseFunc.then(orders=>{

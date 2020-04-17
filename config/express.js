@@ -18,7 +18,7 @@ module.exports=()=>{
         keys:['bestdangonl','bestdangoltjsfd']
     }))
     app.use(bodyParser.json())
-    app.use(express.static("public"))
+    app.use(express.static("public"))// ทำให้เข้าถึง public ได้
     require('../app/router/member.router')(app)
     require('../app/router/approvePartner.router')(app)
     require('../app/router/tour.route')(app)

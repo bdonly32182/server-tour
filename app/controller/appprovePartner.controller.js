@@ -35,9 +35,9 @@ exports.ConfirmPartner = (async(req,res,next)=>{
             var mailOptions = {
                 from: 'tourject@gmail.com',
                 to: result.email,
-                subject: 'Sending Email using Node.js',
+                subject: 'ยืนยันการเข้าร่วมเป็นพาร์ทเนอร์',
                 html: `  <h3>คุณได้รับการอนุมัติการเข้าร่วมจากแอดมินแล้ว</h3>
-                <p>We received a request to reset your password. If you did not make this request, simply ignore this email.</p>
+                <p>ยินดีที่ได้ร่วมงานกับทางบริษัท ${result.companyname} นะคะ</p>
                 
                 
                 <p>
@@ -62,6 +62,8 @@ exports.ConfirmPartner = (async(req,res,next)=>{
                     if(err){
                     return next(err)
                     }else{
+                        
+                        
                        await result.remove()
                         ListPartner.find({},function(err,list){
                             console.log(list);

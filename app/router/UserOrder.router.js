@@ -6,6 +6,7 @@ module.exports=(app)=>{
     app.post('/api/qrcode',order.Generate)
     app.post('/api/approveorder',auth,order.approveOrder)
     app.get('/api/order/:id',order.order)
+    app.delete('/api/partnerDelete/:id',order.partnerDeleteOrder)
     app.get('/api/RNlistorer',auth,order.RNOrderlist)
     app.param('id',order.orderByid)
 }

@@ -124,7 +124,6 @@ exports.ListTour = ((req,res,next)=>{
                 return next(err)
             }else{
              let Count=   tour.map(t => {
-                 console.log(t.member);
                  
                  return t.member
                 })
@@ -145,33 +144,36 @@ exports.tourFetch =((req,res,next)=>{
     res.json(req.tour)
 })
 exports.DelTour = (async(req,res)=>{
-    console.log('req delete',req);
     
-   await req.tour.remove()
-   Tour.find({Partner:req.user.id},function(err,tour){
-    console.log(tour);
+    req.tour.remove()
+    res.json({msg:'delete tour success'})
+//    Tour.find({Partner:req.user.id},function(err,tour){
+//     console.log(tour);
     
-    if(err){
-        return next(err)
-    }else{
-     let Count=   tour.map(t => {
-         return t.member
-        })
-        .map(mem=>{
-         return   mem.map(e=>{
-             return amount = parseInt(e.amountMember)
-         }).reduce((ret,current)=>{
-            return ret + current
-            },0)
-        })
+//     if(err){
+//         return next(err)
+//     }else{
+//      let Count=   tour.map(t => {
+//          return t.member
+//         })
+//         .map(mem=>{
+//          return   mem.map(e=>{
+//              return amount = parseInt(e.amountMember)
+//          }).reduce((ret,current)=>{
+//             return ret + current
+//             },0)
+//         })
       
-        console.log(Count);
+//         console.log(Count);
         
-        res.json({tour,Count})
-    }
-})
+//         res.json({tour,Count})
+//     }
+// })
 })
 exports.UpdateTour = (async(req,res,next)=>{
+    console.log('hilig',req.body.highlights);
+    console.log('hotel',req.body.Hotels);
+    
     
     const {firstname} = req.body  
     Tour.findOneAndUpdate({_id:req.tour._id},req.body,async function(err,Newtour){
@@ -296,6 +298,7 @@ exports.UpdateTour = (async(req,res,next)=>{
             }
             //check hilight
             if(Newtour.highlight.length != req.body.highlights.length){
+                
                 await  Newtour.highlight.splice(0,Newtour.highlight.length)
                 if(Array.isArray(req.body.highlights)){
         
@@ -312,7 +315,8 @@ exports.UpdateTour = (async(req,res,next)=>{
                 
             }
             Newtour.save()
-            res.json(Newtour)
+            // res.json(Newtour)
+            res.json({editSuc:'Edit Success'})
         }
     })
 })
