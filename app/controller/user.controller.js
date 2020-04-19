@@ -178,12 +178,15 @@ exports.user_forgot=((req,res)=>{
     )
 })
 exports.load_user=((req,res)=>{
-    console.log(req.user.id);
+    // console.log(req.user.id);
     
-    User.findById(req.user.id)
+    User.findById({_id:req.user.id})
     .then(user=>{
         console.log(user);
+        if (user) {
+         res.json({user})   
+        }
         
-        res.json({user})
+        
     })
 })

@@ -24,14 +24,12 @@ exports.guide_login=((req,res)=>{
     
 })
 exports.guide_tour=((req,res)=>{
-    console.log(req.guide.id);
-    
+    console.log('dedsdfsdfdsfsdfsdfdsfdsf');
     
         Tour.find({'Round':{$elemMatch:{guide:req.guide.id}}}).then(async tours=>{
-            console.log(tours);
-            
-            res.json(tours)
-    
+            console.log('tourguide',tours);     
+              res.json(tours)   
+ 
         }).catch(e=>{
             console.log('catch guide is tour');
             res.json({msg:'not Exist is tour'})
@@ -40,8 +38,10 @@ exports.guide_tour=((req,res)=>{
    
 })
 exports.guide_load=((req,res)=>{
+    
     GUIDE.findById(req.user.id)
         .then(guide=>{
+            
             res.json({guide})
         }).catch(e=>{
             console.log('load guide catch');

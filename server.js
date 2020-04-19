@@ -16,14 +16,10 @@ socketIO.on('connection',(socket)=>{
             }
             
         })
-            
             Location.find({tourId:tourId})
                     .then(location=>{
                       socket.broadcast.emit('location',location)  
                     })
-        
-        
-        // socket.broadcast.emit('location',{...location})
     })
 })
 let PORT = process.env.PORT || 3001
